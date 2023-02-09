@@ -1,0 +1,37 @@
+{
+  "name": "bleskomat-cli",
+  "version": "1.0.0",
+  "description": "Command-line tool to communicate with Bleskomat hardware device via JSON-RPC over serial API.",
+  "private": true,
+  "main": "cli.js",
+  "bin": {
+    "bleskomat": "cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Bleskomat",
+    "hardware",
+    "CLI",
+    "command-line",
+    "serial",
+    "JSON-RPC",
+    "API"
+  ],
+  "author": {
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
+  },
+  "contributors": [
+    {
+      "name": "Carlos Garcia Ortiz",
+      "email": "yo@carlosgarciaortiz.com"
+    }
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "commander": "10.0.0",
+    "serialport": "10.5.0"
+  }
+}
