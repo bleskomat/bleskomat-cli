@@ -2,6 +2,8 @@
 
 const assert = require('assert');
 const commander = require('commander');
+const fs = require('fs').promises;
+const path = require('path');
 const readline = require('readline');
 const { SerialPort } = require('serialport');
 const { JsonRpcClient } = require('./lib');
@@ -19,6 +21,17 @@ const jsonRpcMethods = [
 	'deletelogs',
 	'spiffs_reformat',
 ];
+
+const slowRpcMethods = [
+	'spiffs_reformat',
+	'getlogs',
+	'deletelogs',
+];
+
+const promptPrefix = '> ';
+let rl;
+
+const logsFilePath = path.join(process.cwd(), 'bleskomat.log');
 
 program
 	.version(pkg.version)
@@ -47,8 +60,7 @@ program
 		port.on('open', () => {
 			console.log('Serial port open!');
 			initializeJsonRpc().then(() => {
-				const promptPrefix = '> ';
-				const rl = readline.createInterface({
+				rl = readline.createInterface({
 					input: process.stdin,
 					output: process.stdout,
 					prompt: promptPrefix,
@@ -71,11 +83,25 @@ program
 					try { params = JSON.parse(params || '[]'); } catch {
 						console.error('ERROR: Invalid params: JSON expected');
 					}
-					client.cmd(method, params)
-						.then(console.log)
+					let timeout = 500;
+					if (slowRpcMethods.includes(method)) {
+						timeout = 20000;
+					}
+					rl.pause();
+					client.cmd(method, params, { timeout })
+						.then(result => {
+							if (method === 'getlogs') {
+								return fs.writeFile(logsFilePath, result).then(() => {
+									console.log('Logs written to bleskomat.log file in current working directory');
+								});
+							} else {
+								console.log(result);
+							}
+						})
 						.catch(console.error)
 						.finally(() => {
-							setTimeout(() => process.stdout.write(promptPrefix), 20);
+							rl.resume();
+							process.stdout.write(promptPrefix);
 						});
 				});
 				process.stdout.write(promptPrefix);
@@ -95,7 +121,15 @@ program
 		let client = new JsonRpcClient(port);
 
 		client.parser.on('data', data => {
+			if (rl) {
+				process.stdout.clearLine();
+				process.stdout.cursorTo(0);
+			}
 			console.log('BLESKOMAT: $', data.toString());
+			if (rl) {
+				process.stdout.write(promptPrefix);
+				rl.line && process.stdout.write(rl.line);
+			}
 		});
 
 		const initializeJsonRpc = () => {
