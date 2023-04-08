@@ -29,6 +29,14 @@
     }
   ],
   "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bleskomat/bleskomat-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bleskomat/bleskomat-cli/issues"
+  },
+  "homepage": "https://github.com/bleskomat/bleskomat-cli#readme",
   "dependencies": {
     "commander": "10.0.0",
     "serialport": "10.5.0"
