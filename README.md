@@ -70,7 +70,7 @@ Get logs:
 ```
 > getlogs
 ```
-This may take up to 10 or more seconds depending how much data needs to be transmitted. The logs will be written a file named "bleskomat.log" in your current working directory.
+This may take up to 10 or more seconds depending how much data needs to be transmitted. The logs will be written to a file named "bleskomat.log" in your current working directory.
 
 
 ## Changelog
